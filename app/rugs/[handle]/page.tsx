@@ -85,7 +85,7 @@ export default async function ProductPage({ params }: Props) {
   
   const specs = parseSpecs(product.descriptionHtml || "");
   const story = getStory(params.handle);
-  const displayTitle = story?.poeticTitle || product.title;
+  const displayTitle = story?.technicalTitle || product.title;
 
   return (
     <div className="min-h-screen">
@@ -114,10 +114,17 @@ export default async function ProductPage({ params }: Props) {
             <div className="lg:col-span-4 lg:sticky lg:top-8 lg:self-start">
               <div className="lg:pt-8">
                 
-                {/* Poetic Title (Main) */}
-                <h1 className="font-serif text-2xl md:text-3xl leading-tight mb-4">
+                {/* Technical Title (Main) */}
+                <h1 className="font-serif text-2xl md:text-3xl leading-tight mb-2">
                   {displayTitle}
                 </h1>
+                
+                {/* Poetic Title (Subtitle) */}
+                {story?.poeticTitle && (
+                  <p className="text-[14px] italic text-charcoal/70 mb-4">
+                    {story.poeticTitle}
+                  </p>
+                )}
 
                 {/* Price */}
                 <div className="mb-2">
@@ -211,14 +218,14 @@ export default async function ProductPage({ params }: Props) {
               A piece woven by hand · A memory carried across time
             </p>
             
-            {/* Technical Title (bold) + Region (italic) */}
-            {story.technicalTitle && (
+            {/* Poetic Title + Region */}
+            {story.poeticTitle && (
               <div className="text-center mb-8">
-                <p className="text-[15px] font-medium text-charcoal">
-                  {story.technicalTitle}
+                <p className="text-xl font-serif italic text-charcoal">
+                  {story.poeticTitle}
                 </p>
                 {story.region && (
-                  <p className="text-[14px] italic text-charcoal/70 mt-1">
+                  <p className="text-[14px] text-charcoal/60 mt-2">
                     {story.region}
                   </p>
                 )}
