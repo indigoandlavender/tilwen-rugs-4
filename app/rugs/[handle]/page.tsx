@@ -161,6 +161,15 @@ export default async function ProductPage({ params }: Props) {
                         </span>
                       </div>
                     ))}
+                    {/* Glossary link */}
+                    <div className="py-3">
+                      <Link 
+                        href="/glossary"
+                        className="text-[11px] uppercase tracking-[0.1em] text-stone hover:text-charcoal transition-colors inline-flex items-center gap-1"
+                      >
+                        Rug terms & tribes →
+                      </Link>
+                    </div>
                   </div>
                 )}
 

@@ -257,6 +257,34 @@ export default function Footer() {
                 </ul>
               </div>
             ))}
+
+            {/* Learn Column (hardcoded) */}
+            <div>
+              <h4 className="text-xs tracking-[0.15em] uppercase mb-6 text-white/40">
+                Learn
+              </h4>
+              <ul className="space-y-3">
+                <li>
+                  <Link
+                    href="/glossary"
+                    className="text-sm text-white/60 hover:text-white transition-colors"
+                  >
+                    Rug Glossary
+                  </Link>
+                </li>
+                <li>
+                  <a
+                    href="https://houseofweaves.co"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-white/60 hover:text-white transition-colors inline-flex items-center gap-2"
+                  >
+                    House of Weaves
+                    <span className="text-xs">↗</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
