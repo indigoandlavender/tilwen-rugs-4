@@ -120,12 +120,10 @@ export default async function ProductPage({ params }: Props) {
                   {displayTitle}
                 </h1>
                 
-                {/* Poetic Title (Subtitle) */}
-                {story?.poeticTitle && (
-                  <p className="text-[14px] italic text-charcoal/70 mb-4">
-                    {story.poeticTitle}
-                  </p>
-                )}
+                {/* Subtitle */}
+                <p className="text-[14px] italic text-charcoal/70 mb-4">
+                  Handmade, one-of-a-kind rug
+                </p>
 
                 {/* Price */}
                 <div className="mb-2">

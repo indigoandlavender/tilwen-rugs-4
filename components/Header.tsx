@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SearchModal from "./SearchModal";
 
 export default function Header() {
   return (
@@ -35,6 +36,7 @@ export default function Header() {
           >
             Contact
           </Link>
+          <SearchModal />
         </div>
       </nav>
     </header>
