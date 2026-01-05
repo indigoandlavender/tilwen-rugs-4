@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --cream: #FAF9F7;
+  --sand: #F5F3EF;
+  --charcoal: #1a1a1a;
+  --stone: #525252;
+  --terracotta: #C4846C;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--cream);
+  color: var(--charcoal);
+  font-family: var(--font-nanum), Georgia, serif;
+  font-size: 14px;
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+}
+
+::selection {
+  background-color: var(--terracotta);
+  color: white;
+}
+
+/* Hidden scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Clean scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--stone);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--charcoal);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-playfair), Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* Body text - Nanum Myeongjo */
+p, li, span, a {
+  font-family: var(--font-nanum), Georgia, serif;
+  line-height: 1.7;
+}
+
+/* Small text - extra spacing for Nanum */
+.text-sm, .text-xs {
+  letter-spacing: 0.03em;
+}
+
+/* Captions and credits - the delicate look */
+.caption, figcaption, .credit {
+  font-family: var(--font-nanum), Georgia, serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Links */
+a {
+  transition: color 0.3s ease;
+}
+
+/* Remove generic hover opacity - let components handle their own */
+
+/* Prose styling for product descriptions */
+.prose {
+  font-size: 0.875rem;
+  line-height: 1.8;
+}
+
+.prose p {
+  margin-bottom: 1em;
+}
+
+.prose strong {
+  font-weight: 700;
+}
+
+/* Button styles - refined, gallery feel */
+.btn-primary {
+  @apply border border-charcoal text-charcoal px-8 py-4 text-[11px] tracking-[0.15em] uppercase transition-all duration-300;
+}
+
+.btn-primary:hover {
+  @apply bg-charcoal text-cream;
+}
+
+.btn-secondary {
+  @apply border border-charcoal/30 text-charcoal/70 px-8 py-4 text-[11px] tracking-[0.15em] uppercase transition-all duration-300;
+}
+
+.btn-secondary:hover {
+  @apply border-charcoal text-charcoal;
+}
+
+/* Focus styles */
+input:focus, textarea:focus, button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--terracotta);
+}
