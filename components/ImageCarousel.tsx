@@ -46,14 +46,14 @@ export default function ImageCarousel({ images, productTitle }: ImageCarouselPro
   return (
     <div className="relative" onKeyDown={handleKeyDown} tabIndex={0}>
       {/* Main Image Container */}
-      <div className="relative aspect-[4/5] bg-sand overflow-hidden">
+      <div className="relative aspect-[4/5] bg-[#f5f5f3] overflow-hidden">
         <Image
           src={currentImage.url}
           alt={currentImage.altText || `${productTitle} - Image ${currentIndex + 1}`}
           fill
-          className="object-cover"
+          className="object-contain object-right"
           priority={currentIndex === 0}
-          sizes="(max-width: 1024px) 100vw, 66vw"
+          sizes="(max-width: 1024px) 100vw, 58vw"
         />
       </div>
 
