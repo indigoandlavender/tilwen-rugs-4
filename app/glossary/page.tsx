@@ -98,7 +98,7 @@ const glossary = [
 
 export default function GlossaryPage() {
   // Get unique first letters
-  const letters = [...new Set(glossary.map(item => item.term[0].toUpperCase()))].sort();
+  const letters = Array.from(new Set(glossary.map(item => item.term[0].toUpperCase()))).sort();
   
   // Group by first letter
   const grouped = glossary.reduce((acc, item) => {
