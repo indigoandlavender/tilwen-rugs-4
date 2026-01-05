@@ -9,6 +9,7 @@ import type { Metadata } from "next";
 import BuyButton from "./BuyButton";
 import ImageCarousel from "@/components/ImageCarousel";
 import ShareTools from "@/components/ShareTools";
+import VisualizeButton from "@/components/VisualizeButton";
 import { getStory } from "@/lib/stories";
 
 interface Props {
@@ -137,13 +138,23 @@ export default async function ProductPage({ params }: Props) {
                 </p>
 
                 {/* Share Tools */}
-                <div className="mb-8">
+                <div className="mb-4">
                   <ShareTools 
                     title={displayTitle} 
                     url={productUrl}
                     imageUrl={imageUrl}
                   />
                 </div>
+
+                {/* Visualize in Room */}
+                {product.featuredImage && (
+                  <div className="mb-8">
+                    <VisualizeButton 
+                      rugImage={product.featuredImage.url}
+                      rugName={displayTitle}
+                    />
+                  </div>
+                )}
 
                 {/* Specs */}
                 {specs.length > 0 && (
