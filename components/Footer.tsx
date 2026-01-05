@@ -1,7 +1,82 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+
+interface Currency {
+  code: string;
+  symbol: string;
+  label: string;
+}
+
+// Currency Switcher Component - receives currencies from Nexus
+function CurrencySwitcher({ currencies }: { currencies: Currency[] }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedCurrency, setSelectedCurrency] = useState<Currency | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Set default currency on mount
+  useEffect(() => {
+    if (currencies.length > 0 && !selectedCurrency) {
+      // Default to EUR if available, otherwise first currency
+      const eurCurrency = currencies.find(c => c.code === "EUR");
+      setSelectedCurrency(eurCurrency || currencies[0]);
+    }
+  }, [currencies, selectedCurrency]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Don't render if no currencies
+  if (currencies.length === 0 || !selectedCurrency) {
+    return null;
+  }
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="text-xs text-white/40 hover:text-white/70 transition-colors flex items-center gap-1.5"
+      >
+        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+        </svg>
+        {selectedCurrency.symbol} {selectedCurrency.code}
+        <svg className={`w-3 h-3 transition-transform ${isOpen ? "rotate-180" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+
+      {isOpen && (
+        <div className="absolute bottom-full mb-2 right-0 bg-[#1f1f1f] border border-white/10 rounded shadow-lg py-1 min-w-[140px]">
+          {currencies.map((currency) => (
+            <button
+              key={currency.code}
+              onClick={() => {
+                setSelectedCurrency(currency);
+                setIsOpen(false);
+              }}
+              className={`w-full text-left px-3 py-1.5 text-xs hover:bg-white/5 transition-colors ${
+                selectedCurrency.code === currency.code ? "text-white" : "text-white/60"
+              }`}
+            >
+              {currency.symbol} {currency.code}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 // Social Icons - flat, minimal, Anthropic style
 function SocialIcon({ name }: { name: string }) {
@@ -49,6 +124,7 @@ interface FooterData {
   };
   columns: FooterColumn[];
   legal: { label: string; href: string }[];
+  currencies: Currency[];
   copyright: {
     year: number;
     name: string;
@@ -294,20 +370,26 @@ export default function Footer() {
           ════════════════════════════════════════════════════════════════════ */}
       <section className="py-6 bg-[#0e0e0e]">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
-          {/* Legal links row */}
-          {footerData.legal.length > 0 && (
-            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mb-4">
-              {footerData.legal.map((link, index) => (
-                <Link
-                  key={index}
-                  href={link.href}
-                  className="text-xs text-white/40 hover:text-white/70 transition-colors"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-          )}
+          {/* Legal links + Currency switcher row */}
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mb-4">
+            {footerData.legal.map((link, index) => (
+              <Link
+                key={index}
+                href={link.href}
+                className="text-xs text-white/40 hover:text-white/70 transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
+            
+            {/* Separator - only show if both legal and currencies exist */}
+            {footerData.legal.length > 0 && footerData.currencies.length > 0 && (
+              <span className="text-white/20">|</span>
+            )}
+            
+            {/* Currency Switcher - from Nexus */}
+            <CurrencySwitcher currencies={footerData.currencies} />
+          </div>
 
           {/* Copyright */}
           <p className="text-center text-xs text-white/30">

@@ -1,7 +1,7 @@
 import { google } from "googleapis";
 
 const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID!;
-const NEXUS_SHEET_ID = process.env.NEXUS_SHEET_ID;
+const NEXUS_SHEET_ID = process.env.NEXUS_SPREADSHEET_ID || process.env.NEXUS_SHEET_ID;
 const CLIENT_EMAIL = process.env.GOOGLE_CLIENT_EMAIL!;
 const PRIVATE_KEY = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n")!;
 

@@ -11,6 +11,11 @@ export async function GET() {
     // Get site settings for contact info
     const settings = await getSettings();
 
+    // Get site config from Nexus to get site_type
+    const allSites = await getNexusData("Sites");
+    const siteConfig = allSites.find((s: any) => s.site_id === SITE_ID);
+    const siteType = siteConfig?.site_type || "ecommerce";
+
     // Get footer links from Nexus_Footer_Links (filtered by brand_id)
     const allFooterLinks = await getNexusData("Nexus_Footer_Links");
     const footerLinksData = allFooterLinks.filter(
@@ -51,40 +56,60 @@ export async function GET() {
       });
     }
 
-    // Get legal pages from Nexus
+    // Get legal pages from Nexus_Legal_Pages (single source of truth)
     let legal: any[] = [];
     try {
       const legalPages = await getNexusData("Nexus_Legal_Pages");
       
       // Get unique page_ids (each page has multiple sections)
-      const pageIds = Array.from(new Set(legalPages.map((p: any) => p.page_id)));
+      const pageIds = Array.from(new Set(legalPages.map((p: any) => p.page_id).filter(Boolean)));
       
-      // Map to legal links
-      const pageTitles: Record<string, string> = {
-        terms: "Terms",
+      // Get page titles from the data
+      const pageTitleMap: Record<string, string> = {};
+      legalPages.forEach((p: any) => {
+        if (p.page_id && p.page_title && !pageTitleMap[p.page_id]) {
+          pageTitleMap[p.page_id] = p.page_title;
+        }
+      });
+      
+      // Short labels for footer display
+      const shortLabels: Record<string, string> = {
         privacy: "Privacy",
+        terms: "Terms",
         disclaimer: "Disclaimer",
         "intellectual-property": "IP",
       };
       
-      legal = pageIds
-        .filter((id) => pageTitles[id as string])
+      // Order for display
+      const displayOrder = ["privacy", "terms", "disclaimer", "intellectual-property"];
+      
+      legal = displayOrder
+        .filter((id) => pageIds.includes(id))
         .map((id) => ({
-          label: pageTitles[id as string],
+          label: shortLabels[id] || pageTitleMap[id] || id,
           href: `/${id}`,
         }));
     } catch (e) {
-      console.warn("Could not fetch legal pages from Nexus:", e);
+      console.error("Could not fetch legal pages from Nexus:", e);
     }
 
-    // Fallback legal if Nexus is empty
-    const finalLegal =
-      legal.length > 0
-        ? legal
-        : [
-            { label: "Privacy", href: "/privacy" },
-            { label: "Terms", href: "/terms" },
-          ];
+    // Get currencies from Nexus_Currencies (filtered by site_type)
+    let currencies: any[] = [];
+    try {
+      const allCurrencies = await getNexusData("Nexus_Currencies");
+      currencies = allCurrencies
+        .filter((c: any) => {
+          const allowedTypes = (c.show_for_site_types || "").split(",").map((t: string) => t.trim());
+          return allowedTypes.includes(siteType) || allowedTypes.includes("all");
+        })
+        .map((c: any) => ({
+          code: c.currency_code,
+          symbol: c.currency_symbol,
+          label: c.currency_label,
+        }));
+    } catch (e) {
+      console.error("Could not fetch currencies from Nexus:", e);
+    }
 
     // Build columns from Nexus_Footer_Links data
     // Columns: brand_id, column_number, column_title, link_order, link_label, link_href, link_type
@@ -138,7 +163,8 @@ export async function GET() {
         brandName: settings.siteName,
       },
       columns,
-      legal: finalLegal,
+      legal: legal.length > 0 ? legal : [],
+      currencies: currencies.length > 0 ? currencies : [],
       copyright: {
         year: new Date().getFullYear(),
         name: settings.siteName,
@@ -161,30 +187,20 @@ export async function GET() {
   } catch (error: any) {
     console.error("Footer fetch error:", error);
 
-    // Return minimal fallback on error
+    // Return minimal fallback on error - no hardcoded content
     return NextResponse.json({
       success: true,
       data: {
         brandId: SITE_ID,
         newsletter: {
-          show: true,
-          title: "New Arrivals",
-          description: "Be the first to see new rugs.",
+          show: false,
+          title: "",
+          description: "",
           brandName: "Tilwen",
         },
-        columns: [
-          {
-            number: 1,
-            title: "Tilwen",
-            links: [
-              { order: 1, label: "hello@tilwen.com", href: "mailto:hello@tilwen.com", type: "email" },
-            ],
-          },
-        ],
-        legal: [
-          { label: "Privacy", href: "/privacy" },
-          { label: "Terms", href: "/terms" },
-        ],
+        columns: [],
+        legal: [],
+        currencies: [],
         copyright: {
           year: new Date().getFullYear(),
           name: "Tilwen",
